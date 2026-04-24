@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { Code, Database, BookOpenCheck } from 'lucide-react';
+import LocomotiveScroll from 'locomotive-scroll';
 
 export default function Home() {
 
@@ -18,7 +19,7 @@ export default function Home() {
     }, 3000)
   }, [])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async () => {
       const LocomotiveScroll = (await import('locomotive-scroll')).default;
       const locomotiveScroll = new LocomotiveScroll();
@@ -26,7 +27,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="w-full"> 
+    <main className={`w-full `}> 
       {/* section 1 */}
       <section className="min-h-screen">
         <Image
