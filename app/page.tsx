@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <main className={`w-full `}> 
       {/* section 1 */}
-      <section className="min-h-screen">
+      <section className="min-h-screen relative">
         <Image
           src={'/Line.svg'}
           fill={true}
@@ -38,7 +38,6 @@ export default function Home() {
           className='text-black object-cover -z-10 opacity-10 absolute'
         />
         <div className={`h-screen flex flex-col gap-4 justify-center items-center pb-16`}>
-          {/* <h2 className='text-2xl flex'>Welcome to my portfolio.</h2> */}
           <h1 className={`text-7xl tracking-widest select-none ${googleSans.className}`}>Haerunnas.</h1>
           <h2 className="text-2xl text-gray-600 select-none font-light flex items-center gap-2">
             Crafting digital experiences that are
@@ -113,6 +112,47 @@ export default function Home() {
               <li>Java</li>
               <li>Python</li>
             </ul>
+          </div>
+        </div>
+      </section>
+      
+      {/* section 3 */}
+      <section className='min-h-screen'>
+        <div className='flex flex-col bg-black m-8 p-16 rounded-3xl h-[80vh] relative gap-18'>
+          <div className='flex flex-col pb-20'>
+            <h2 className='text-left text-4xl font-bold pb-4 text-white'>Project</h2>
+            <hr className='text-white w-xs' />
+          </div>
+          <div className='flex flex-row gap-8 h-1/2 w-full justify-evenly items-center relative'>
+            <div className='hover:shadow-[0_5px_25px_-10px_rgba(0,0,0,0.1)] shadow-white p-8 transition-all duration-700 border-transparent border rounded-2xl h-full w-1/5'>
+              <p className='text-white'>PROJECT 1</p>
+            </div>
+            <div className='hover:shadow-[0_5px_25px_-10px_rgba(0,0,0,0.1)] shadow-white p-8 transition-all duration-700 border-transparent border rounded-2xl h-full w-1/5'>
+              <p className='text-white'>PROJECT 2</p>
+            </div>
+            <div className='hover:shadow-[0_5px_25px_-10px_rgba(0,0,0,0.1)] shadow-white p-8 transition-all duration-700 border-transparent border rounded-2xl h-full w-1/5'>
+              <p className='text-white'>PROJECT 3</p>
+            </div>
+            <div className='hover:shadow-[0_5px_25px_-10px_rgba(0,0,0,0.1)] shadow-white p-8 transition-all duration-700 border-transparent border rounded-2xl h-full w-1/5'>
+              <p className='text-white'>PROJECT 4</p>
+            </div>
+            <div className='hover:shadow-[0_5px_25px_-10px_rgba(0,0,0,0.1)] shadow-white p-8 transition-all duration-700 border-transparent border rounded-2xl h-full w-1/5'>
+              <p className='text-white'>PROJECT 5</p>
+            </div>
+          </div>
+          <Image
+            src={'/'}
+            fill
+            alt='BG'
+          />
+        </div>
+      </section>
+      
+      {/* section 4 */}
+      <section className='min-h-screen'>
+        <div className=''>
+          <div>
+            
           </div>
         </div>
       </section>
