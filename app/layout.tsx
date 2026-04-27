@@ -5,6 +5,9 @@ import { googleSans } from "@/fonts/fonts";
 export const metadata: Metadata = {
   title: "Portfolio",
   description: "Haerunnas",
+  openGraph: {
+    images: '/logoipsum-291.svg'
+  }
 };
 
 export default function RootLayout({

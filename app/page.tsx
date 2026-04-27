@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 
-import { Code, Database, BookOpenCheck,  } from 'lucide-react';
+import { Code, Database, BookOpenCheck, Bot } from 'lucide-react';
 import LocomotiveScroll from 'locomotive-scroll';
 
 export default function Home() {
@@ -117,12 +117,75 @@ export default function Home() {
       </section>
       
       {/* section 3 */}
-      <section className='min-h-screen flex flex-col relative py-16 px-24'>
-        <h2 className='text-left text-4xl font-bold'>Project</h2>
-        <hr className='' />
-        <div className=''>
-          <div>
-            
+      <section className='min-h-screen flex flex-col relative py-16 px-24 w-full'>
+        <div className='h-1/5'>
+          <h2 className='text-left text-4xl font-bold'>Project</h2>
+          <hr className='mb-20' />
+        </div>
+        <div className='w-full h-4/5'>
+          <div className="w-full h-full grid grid-cols-4 grid-rows-5 gap-0.5">
+              <a
+                href='https://github.com/hrnns-ti/chatSQL'
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="PABI"
+                className="
+                  group relative flex justify-center items-center row-span-3 col-start-1 row-start-1 
+                  border-gray-200 border bg-white h-full rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
+              >
+                <Image
+                  src={'/ooorganize.svg'}
+                  alt='BG'
+                  fill
+                  className='object-contain opacity-10'
+                />
+                <Bot size={48} className='text-blue-500'/>
+              </a>
+              <div 
+                className="
+                  flex justify-center items-center col-span-2 row-span-3 col-start-2 row-start-1 
+                  border-gray-200 border bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
+              >
+                <h1 className='h-80 flex justify-center items-center text-4xl font-semibold'>02</h1>
+              </div>
+              <a
+                href='https://github.com/hrnns-ti/climact-api' 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="ClimAct"
+                className="
+                group relative flex justify-center items-center row-span-2 col-start-4 row-start-1 
+                border-gray-200 border bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
+              >
+                <Image
+                  src={'/ooorganize.svg'}
+                  alt='BG'
+                  fill
+                  className='object-contain opacity-10'
+                />
+                <Database size={48} className='text-blue-500'/>
+              </a>
+              <div 
+                className="
+                  flex justify-center items-center col-span-2 row-span-2 col-start-1 row-start-4 border 
+                  border-gray-200 bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
+              >
+                <h1 className='h-70 flex justify-center items-center text-4xl font-semibold'>04</h1>
+              </div>
+              <div 
+                className="
+                  flex justify-center items-center row-span-2 col-start-3 row-start-4 
+                  border border-gray-200 bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
+              >
+                <h1 className='h-70 flex justify-center items-center text-4xl font-semibold'>05</h1>
+              </div>
+              <div 
+                className="
+                  flex justify-center items-center row-span-3 col-start-4 row-start-3 
+                  border border-gray-200 bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
+              >
+                <h1 className='h-70 flex justify-center items-center text-4xl font-semibold'>06</h1>
+              </div>
           </div>
         </div>
       </section>
@@ -302,7 +365,7 @@ export default function Home() {
             className='absolute object-cover -z-10 rounded-3xl'
           />
         </div>
-      </section>
+        </section>
     </main>
   );
 }
