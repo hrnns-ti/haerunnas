@@ -142,7 +142,7 @@ export default function Home() {
                 <Bot size={48} className='text-blue-500'/>
               </a>
               <a
-                href='https://github.com/hrnns-ti/noir' 
+                href='https://noir-518.pages.dev/' 
                 target="_blank" 
                 rel="noopener noreferrer"
                 aria-label="Noir"
@@ -154,9 +154,9 @@ export default function Home() {
                   src={'/noir.png'}
                   alt='BG'
                   fill
-                  className='object-cover opacity-40 absolute z-10 visible'
+                  className='object-cover opacity-40 absolute z-10 visible hover:opacity-100 duration-500 transition-all'
                 />
-                <h1 className='h-80 flex justify-center items-center text-4xl font-semibold z-15'>NOIR</h1>
+                {/* <h1 className='h-70 flex justify-center items-center text-4xl font-semibold z-15'>NOIR</h1> */}
               </a>
               <a
                 href='https://github.com/hrnns-ti/climact-api' 
