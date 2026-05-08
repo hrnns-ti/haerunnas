@@ -151,9 +151,10 @@ export default function Home() {
                   border-gray-200 border bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
               >
                 <Image
-                  src={'/noir.png'}
+                  src={'/noir.gif'}
                   alt='BG'
                   fill
+                  property=''
                   className='object-cover opacity-40 absolute z-10 visible hover:opacity-100 duration-500 transition-all'
                 />
                 {/* <h1 className='h-70 flex justify-center items-center text-4xl font-semibold z-15'>NOIR</h1> */}
