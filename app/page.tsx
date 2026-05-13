@@ -151,7 +151,7 @@ export default function Home() {
                   border-gray-200 border bg-white rounded-sm shadow-2xl/0 hover:shadow-2xl hover:z-10 transition-all duration-500"
               >
                 <Image
-                  src={'/noir.gif'}
+                  src={'/noir.jpeg'}
                   alt='BG'
                   fill
                   property=''
