@@ -2,14 +2,17 @@
 
 import { googleSans } from '@/fonts/fonts'
 import Image from 'next/image';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useRef, useLayoutEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { Code, Database, BookOpenCheck, Bot } from 'lucide-react';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import LocomotiveScroll from 'locomotive-scroll';
 
 export default function Home() {
-
+  
+  const mountRef = useRef<HTMLDivElement>(null)
   const words = ["elegant.", "immersive.", "intelligent.", "scalable."];
   const [index, setIndex] = useState(0)
 
@@ -26,7 +29,179 @@ export default function Home() {
     })();
   }, []);
 
+  useEffect(() => {
+    const currentMount = mountRef.current
+    if (!currentMount) return
+
+    const width = currentMount.clientWidth
+    const height = currentMount.clientHeight
+
+    const scene = new THREE.Scene
+    const camera = new THREE.PerspectiveCamera(50, width / height, .1, 1000)
+    camera.position.z = 10
+    camera.position.y = 0
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    currentMount.appendChild(renderer.domElement);
+
+    // --- FITUR DRAG PER OBJEK (RAYCASTER) ---
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    let isDragging = false;
+    let selectedObject: THREE.Object3D | null = null;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    const onPointerDown = (event: PointerEvent) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects([leftPyramid, rightPyramid], true);
+
+      if (intersects.length > 0) {
+        isDragging = true;
+        selectedObject = intersects[0].object.parent;
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+      }
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (isDragging && selectedObject) {
+        const deltaMove = {
+          x: event.clientX - previousMousePosition.x,
+          y: event.clientY - previousMousePosition.y
+        };
+
+        selectedObject.position.y -= deltaMove.y * 0.01;
+        selectedObject.position.x += deltaMove.x * 0.01;
+      }
+      previousMousePosition = { x: event.clientX, y: event.clientY };
+    };
+
+    const onPointerUp = () => {
+      isDragging = false;
+      selectedObject = null;
+    };
+
+    // Pasang Event Listener
+    const canvas = renderer.domElement;
+    canvas.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove); 
+    window.addEventListener('pointerup', onPointerUp);
+
+    const leftPyramid = new THREE.Group();
+    const rightPyramid = new THREE.Group();
+    scene.add(leftPyramid);
+    scene.add(rightPyramid);
+
+    const loader = new GLTFLoader()
+
+    loader.load('/pyramid-frame.glb', (gltf) => {
+      gltf.scene.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          const geometry = mesh.geometry;
+
+          const wireframeGeo = new THREE.WireframeGeometry(geometry);
+          
+          const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0x555555,
+            transparent: true,
+            opacity: 1
+          });
+          // const lines = new THREE.LineSegments(wireframeGeo, lineMaterial);
+            
+          const pointMaterial = new THREE.PointsMaterial({
+            color: 0x333333,
+            size: 0.1 
+          });
+          // const points = new THREE.Points(geometry, pointMaterial);
+          
+          const leftLines = new THREE.LineSegments(wireframeGeo, lineMaterial);
+          const leftPoints = new THREE.Points(geometry, pointMaterial);
+          leftPyramid.add(leftLines);
+          leftPyramid.add(leftPoints);
+
+          const rightLines = new THREE.LineSegments(wireframeGeo, lineMaterial);
+          const rightPoints = new THREE.Points(geometry, pointMaterial);
+          rightPyramid.add(rightLines);
+          rightPyramid.add(rightPoints);
+        }
+      })
+
+      leftPyramid.position.x = -7.5;
+      leftPyramid.position.y = 0;
+      leftPyramid.userData.basePosition = { x: -7.5, y: 0 };
+      leftPyramid.rotateX(30)
+      
+      rightPyramid.position.x = 7.5;
+      rightPyramid.position.y = 2;
+      rightPyramid.userData.basePosition = { x: 7.5, y: 2 };
+      rightPyramid.rotateZ(4)
+
+      leftPyramid.rotation.x = -0.2
+      rightPyramid.rotation.x = 0.3;
+      leftPyramid.rotation.y = 0.3;
+      rightPyramid.rotation.y = -0.2;
+    })
+
+    const handleResize = () => {
+      if (!currentMount) return
+      const newWidth = currentMount.clientWidth;
+      const newHeight = currentMount.clientHeight;
+      camera.aspect = newWidth / newHeight;
+      camera.updateProjectionMatrix(); 
+      renderer.setSize(newWidth, newHeight);
+    }
+    window.addEventListener('resize', handleResize);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      
+      leftPyramid.rotation.y += 0.002; 
+      leftPyramid.rotation.x += 0.0002;
+      leftPyramid.rotation.x -= 0.002;
+
+      rightPyramid.rotation.y -= 0.002;
+      rightPyramid.rotation.x += 0.0002;
+      rightPyramid.rotation.z += 0.002;
+
+      if (leftPyramid.userData.basePosition && selectedObject !== leftPyramid) {
+        // Tarik pelan-pelan ke posisi awal. Angka 0.05 adalah kecepatan baliknya (0.01 - 0.1)
+        leftPyramid.position.x = THREE.MathUtils.lerp(leftPyramid.position.x, leftPyramid.userData.basePosition.x, 0.05);
+        leftPyramid.position.y = THREE.MathUtils.lerp(leftPyramid.position.y, leftPyramid.userData.basePosition.y, 0.05);
+      }
+
+      // Cek Piramida Kanan
+      if (rightPyramid.userData.basePosition && selectedObject !== rightPyramid) {
+        rightPyramid.position.x = THREE.MathUtils.lerp(rightPyramid.position.x, rightPyramid.userData.basePosition.x, 0.05);
+        rightPyramid.position.y = THREE.MathUtils.lerp(rightPyramid.position.y, rightPyramid.userData.basePosition.y, 0.05);
+      }
+
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+
+      if (currentMount) {
+        currentMount.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, []);
+
   return (
+    
     <main className={`w-full `}> 
       {/* section 1 */}
       <section className="min-h-screen relative">
@@ -202,50 +377,51 @@ export default function Home() {
       </section>
 
       {/* section 4 */}
-      <section className='min-h-screen flex flex-col relative py-16 px-24 items-center'>
-        <h2 className='text-center text-4xl font-bold mb-20'>Experience</h2>
-        {/* <hr className='' /> */}  
-        <div className='relative w-full max-w-6xl flex flex-col items-center'>
+      <section className='w-full h-screen flex flex-col relative my-16 items-center'>
+        
+        <div
+          ref={mountRef} 
+          className='absolute w-full h-full z-0 overflow-hidden top-0 left-0'
+        />
+        
+        <div className='flex absolute w-full h-full bg-white/70 z-10 pointer-events-none'/>
+        
+        <h2 className='text-center text-4xl font-bold mb-20 z-20 relative pointer-events-none'>Experience</h2>
+        
+        <div className='relative w-full flex flex-col items-center z-20 pointer-events-none select-none'>
           
-          {/* Garis Vertikal Utama */}
           <div className='absolute top-0 bottom-0 w-px bg-black/50 left-1/2 -translate-x-1/2'></div>
           
           {/* Item Experience 1 */}
           <div className='relative w-full flex flex-row justify-center items-center my-8'>
-            
-            {/* Titik (Dot) di tengah garis */}
-            {/* z-10 agar berada di atas garis, outline putih agar ada pemisah yang elegan */}
             <div className='absolute w-2 h-2 bg-blue-600 rounded-full left-1/2 -translate-x-1/2 z-10 outline-4 outline-white'></div>
             
-            {/* Konten Kiri (Misal: Role & Tahun) */}
-            <div className='w-1/2 pr-32 text-right'>
+            {/* 5. KONTEN KIRI: Kembalikan pointer-events-auto agar teks bisa diseleksi/diklik */}
+            <div className='w-1/2 pr-32 text-right pointer-events-auto'>
               <h3 className='text-xl font-semibold tracking-wide'>Computer Science Student</h3>
               <p className='text-sm text-gray-500 mt-1'>UIN Syarif Hidayatullah Jakarta</p>
               <p className='text-sm text-gray-500 mt-1'>2024 - Present</p>
             </div>
             
-            {/* Konten Kanan (Misal: Deskripsi) */}
-            <div className='w-1/2 pl-32 text-left'>
+            {/* KONTEN KANAN */}
+            <div className='w-1/2 pl-32 text-left pointer-events-auto'>
               <p className='text-base text-gray-700 leading-relaxed'>
-                {/* Dedicated to continuous learning and complex problem-solving through software engineering. Actively exploring modern web development and AI/LLM integrations to build intelligent and scalable digital products. */}
+                {/* Deskripsi */}
               </p>
             </div>
           </div>
           
           {/* Item Experience 2 */}
           <div className='relative w-full flex flex-row justify-center items-center my-8'>
-            
             <div className='absolute w-2 h-2 bg-blue-600 rounded-full left-1/2 -translate-x-1/2 z-10 outline-4 outline-white'></div>
             
-            {/* Konten Kiri (Misal: Role & Tahun) */}
-            <div className='w-1/2 pr-32 text-right'>
+            <div className='w-1/2 pr-32 text-right pointer-events-auto'>
               <p className='text-base text-gray-700 leading-relaxed'>
-                {/* Facilitating academic growth and technical skill enhancement within the informatics student community. */}
+                {/* Deskripsi */}
               </p>
             </div>
             
-            {/* Konten Kanan (Misal: Deskripsi) */}
-            <div className='w-1/2 pl-32 text-left'>
+            <div className='w-1/2 pl-32 text-left pointer-events-auto'>
               <h3 className='text-xl font-semibold tracking-wide'>Staff of Academic Development</h3>
               <p className='text-sm text-gray-500 mt-1'>Himpunan Mahasiswa Teknik Informatika</p>
               <p className='text-sm text-gray-500 mt-1'>2025 - Present</p>
@@ -254,20 +430,17 @@ export default function Home() {
           
           {/* Item Experience 3 */}
           <div className='relative w-full flex flex-row justify-center items-center my-8'>
-            
             <div className='absolute w-2 h-2 bg-blue-600 rounded-full left-1/2 -translate-x-1/2 z-10 outline-4 outline-white'></div>
             
-            {/* Konten Kiri (Misal: Role & Tahun) */}
-            <div className='w-1/2 pr-32 text-right'>
+            <div className='w-1/2 pr-32 text-right pointer-events-auto'>
               <h3 className='text-xl font-semibold tracking-wide'>Head of Cybersecurity</h3>
               <p className='text-sm text-gray-500 mt-1'>Google Developer Group on Campus UINJKT</p>
               <p className='text-sm text-gray-500 mt-1'>2025 - Present</p>
             </div>
             
-            {/* Konten Kanan (Misal: Deskripsi) */}
-            <div className='w-1/2 pl-32 text-left'>
+            <div className='w-1/2 pl-32 text-left pointer-events-auto'>
               <p className='text-base text-gray-700 leading-relaxed'>
-                {/* Leading the division by organizing hands-on workshops tech talks, and challenge. Focused on raising awareness about foundational digital security practices. */}
+                {/* Deskripsi */}
               </p>
             </div>
           </div>
