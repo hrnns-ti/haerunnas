@@ -111,13 +111,14 @@ export default function Home() {
           const lineMaterial = new THREE.LineBasicMaterial({
             color: 0x555555,
             transparent: true,
-            opacity: 1
+            opacity: .3
           });
           // const lines = new THREE.LineSegments(wireframeGeo, lineMaterial);
             
           const pointMaterial = new THREE.PointsMaterial({
-            color: 0x333333,
-            size: 0.1 
+            color: 0xcccccc,
+            size: .1,
+            opacity: .1 
           });
           // const points = new THREE.Points(geometry, pointMaterial);
           
@@ -292,7 +293,7 @@ export default function Home() {
       </section>
       
       {/* section 3 */}
-      <section className='min-h-screen flex flex-col relative py-16 px-24 w-full'>
+      <section className='min-h-screen flex flex-col relative py-16 px-24 w-full mb-48'>
         <div className='h-1/5'>
           <h2 className='text-left text-4xl font-bold'>Project</h2>
           <hr className='mb-20' />
@@ -377,14 +378,12 @@ export default function Home() {
       </section>
 
       {/* section 4 */}
-      <section className='w-full h-screen flex flex-col relative my-16 items-center'>
+      <section className='w-full h-screen flex flex-col relative py-26 items-center'>
         
         <div
           ref={mountRef} 
           className='absolute w-full h-full z-0 overflow-hidden top-0 left-0'
         />
-        
-        <div className='flex absolute w-full h-full bg-white/70 z-10 pointer-events-none'/>
         
         <h2 className='text-center text-4xl font-bold mb-20 z-20 relative pointer-events-none'>Experience</h2>
         
