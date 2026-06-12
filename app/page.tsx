@@ -10,6 +10,37 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import LocomotiveScroll from 'locomotive-scroll';
 
+
+function SkillItem({ number, title, items }: { number: string, title: string, items: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-black/20">
+      <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer flex py-4 text-2xl">
+        <span className="pr-6 text-gray-500 text-sm font-mono">{number}</span> 
+        {title}
+      </div>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 1 }}
+            transition={{ duration: 0.75, ease: [0.04, 0.62, 0.23, 0.98] }} 
+            className="overflow-hidden"
+          >
+            <ul className="pl-16 pb-11 list-['\-'] space-y-3">
+              {items.map((item, i) => <li key={i} className='pl-4'>{item}</li>)}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+
 export default function Home() {
   
   const mountRef = useRef<HTMLDivElement>(null)
@@ -47,7 +78,6 @@ export default function Home() {
     renderer.domElement.style.height = '100%';
     currentMount.appendChild(renderer.domElement);
 
-    // --- FITUR DRAG PER OBJEK (RAYCASTER) ---
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
@@ -87,7 +117,6 @@ export default function Home() {
       selectedObject = null;
     };
 
-    // Pasang Event Listener
     const canvas = renderer.domElement;
     canvas.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove); 
@@ -113,14 +142,12 @@ export default function Home() {
             transparent: true,
             opacity: .3
           });
-          // const lines = new THREE.LineSegments(wireframeGeo, lineMaterial);
             
           const pointMaterial = new THREE.PointsMaterial({
             color: 0xcccccc,
             size: .1,
             opacity: .1 
           });
-          // const points = new THREE.Points(geometry, pointMaterial);
           
           const leftLines = new THREE.LineSegments(wireframeGeo, lineMaterial);
           const leftPoints = new THREE.Points(geometry, pointMaterial);
@@ -172,12 +199,10 @@ export default function Home() {
       rightPyramid.rotation.z += 0.002;
 
       if (leftPyramid.userData.basePosition && selectedObject !== leftPyramid) {
-        // Tarik pelan-pelan ke posisi awal. Angka 0.05 adalah kecepatan baliknya (0.01 - 0.1)
         leftPyramid.position.x = THREE.MathUtils.lerp(leftPyramid.position.x, leftPyramid.userData.basePosition.x, 0.05);
         leftPyramid.position.y = THREE.MathUtils.lerp(leftPyramid.position.y, leftPyramid.userData.basePosition.y, 0.05);
       }
 
-      // Cek Piramida Kanan
       if (rightPyramid.userData.basePosition && selectedObject !== rightPyramid) {
         rightPyramid.position.x = THREE.MathUtils.lerp(rightPyramid.position.x, rightPyramid.userData.basePosition.x, 0.05);
         rightPyramid.position.y = THREE.MathUtils.lerp(rightPyramid.position.y, rightPyramid.userData.basePosition.y, 0.05);
@@ -256,38 +281,15 @@ export default function Home() {
       </section>
 
       {/* section 2 */}
-      <section className="min-h-screen flex flex-col relative py-16 px-24 justify-center">
+      <section className="h-auto flex flex-col relative pt-64 pb-32 px-24">
         <h2 className='text-right text-4xl font-bold'>Skills & Expertise</h2>
         <hr className='' />
-        <div className="py-16 flex flex-row justify-evenly">
-          <div className='w-1/3 flex flex-col'>
-            <Code strokeWidth={2} className='text-gray-600'></Code>
-            <p className="text-xl font-semibold pt-8 pb-2">FrontEnd Engineering</p>
-            <ul className='list-disc marker:text-blue-700 pl-4 space-y-2'>
-              <li>React & NextJS</li>
-              <li>Tailwind CSS</li>
-              <li>Bootstrap</li>
-              <li>Framer Motion</li>
-            </ul>
-          </div>
-          <div className='w-1/3 flex flex-col'>
-            <Database strokeWidth={2} className='text-gray-600'></Database>
-            <p className="text-xl font-semibold pt-8 pb-2">BackEnd Architecture</p>
-            <ul className='list-disc marker:text-blue-700 pl-4 space-y-2'>
-              <li>ExpressJS</li>
-              <li>PostgreSQL</li>
-              {/* <li>test</li> */}
-            </ul>
-          </div>
-          <div className='w-1/3 flex flex-col'>
-            <BookOpenCheck strokeWidth={2} className='text-gray-600'></BookOpenCheck>
-            <p className="text-xl font-semibold pt-8 pb-2">Programming Language</p>
-            <ul className='list-disc marker:text-blue-700 pl-4 space-y-2'>
-              <li>JavaScript</li>
-              <li>TypeScript</li>
-              <li>Java</li>
-              <li>Python</li>
-            </ul>
+        <div className="py-24 flex flex-row">
+          <div className=" w-full h-full flex flex-col relative justify-center gap-8">
+            <SkillItem number="01." title="FrontEnd Development" items={["React & NextJS", "Tailwind", "Framer Motion"]} />
+            <SkillItem number="02." title="BackEnd Architecture" items={["Express", "Postgres"]} />
+            <SkillItem number="03." title="Programming Languages" items={["Javascript", "Typescript", "Python", "Java"]} />
+            <SkillItem number="04." title="Interpersonal Skills" items={["Team Collaboration", "Analytical Problem Solving", "Adaptability & Rapid Learning", "Cross-Functional Communication"]} />
           </div>
         </div>
       </section>
